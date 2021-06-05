@@ -57,7 +57,7 @@ public class Main {
         System.out.println("Success!");
         switch (Utils.getPlatformName()) {
             case "windows":
-                temp = "\"C:" + File.separator + "Program Files (x86)" + File.separator + "Minecraft Launcher" + File.separator + "runtime" + File.separator + "jre-x64" + File.separator + "bin" + File.separator + "javaw.exe\"";
+                temp = "\"C:" + File.separator + "Program Files (x86)" + File.separator + "Minecraft Launcher" + File.separator + "runtime" + File.separator + "jre-x64" + File.separator + "bin" + File.separator + "java.exe\"";
                 break;
             case "osx":
                 temp = "Library/Application Support/minecraft/jre-x64/jre.bundle/Contents/Home/bin/java";

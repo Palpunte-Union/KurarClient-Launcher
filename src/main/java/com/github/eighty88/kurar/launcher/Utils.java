@@ -153,7 +153,16 @@ public class Utils {
     public static int readURL() throws Exception {
         BufferedReader reader = null;
         try {
-            URL url = new URL("https://palpunte-union.github.io/KurarClient-Binary/latest.json");
+            URL url = new URL("https://pa-union.f5.si/KurarClient-Binary/latest.json");
+            reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            StringBuilder builder = new StringBuilder();
+            char[] chars = new char[1024];
+            int read;
+            while ((read = reader.read(chars)) != -1)
+                builder.append(chars, 0, read);
+            return Json.parse(builder.toString()).asObject().getInt("version", 1);
+        } catch (Exception e) {
+            URL url = new URL("http://pa-union.f5.si/KurarClient-Binary/latest.json");
             reader = new BufferedReader(new InputStreamReader(url.openStream()));
             StringBuilder builder = new StringBuilder();
             char[] chars = new char[1024];
@@ -173,7 +182,14 @@ public class Utils {
         try {
             if ((new File(getKurarDirectory(), "latest.json")).exists())
                 (new File(getKurarDirectory(), "latest.json")).delete();
-            URL url = new URL("https://palpunte-union.github.io/KurarClient-Binary/latest.json");
+            URL url = new URL("https://pa-union.f5.si/KurarClient-Binary/latest.json");
+            byteChannel = Channels.newChannel(url.openStream());
+            outputStream = new FileOutputStream(new File(getKurarDirectory(), "latest.json"));
+            outputStream.getChannel().transferFrom(byteChannel, 0L, Long.MAX_VALUE);
+        } catch (Exception e) {
+            if ((new File(getKurarDirectory(), "latest.json")).exists())
+                (new File(getKurarDirectory(), "latest.json")).delete();
+            URL url = new URL("http://pa-union.f5.si/KurarClient-Binary/latest.json");
             byteChannel = Channels.newChannel(url.openStream());
             outputStream = new FileOutputStream(new File(getKurarDirectory(), "latest.json"));
             outputStream.getChannel().transferFrom(byteChannel, 0L, Long.MAX_VALUE);
