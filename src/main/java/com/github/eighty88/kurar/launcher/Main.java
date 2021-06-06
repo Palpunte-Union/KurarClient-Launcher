@@ -46,41 +46,36 @@ public class Main {
 
     public void launch(String[] args) {
         System.out.println("Starting...");
-        String temp;
-        Manager manager = new Manager(new File(Utils.getKurarDirectory(), "KurarClient.json").getAbsolutePath());
-        System.out.print("Download Assets and Libraries...");
-        try {
-            manager.download();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Success!");
-        switch (Utils.getPlatformName()) {
-            case "windows":
-                temp = "\"C:" + File.separator + "Program Files (x86)" + File.separator + "Minecraft Launcher" + File.separator + "runtime" + File.separator + "jre-x64" + File.separator + "bin" + File.separator + "java.exe\"";
-                break;
-            case "osx":
-                temp = "Library/Application Support/minecraft/jre-x64/jre.bundle/Contents/Home/bin/java";
-                break;
-            default:
-                temp = "java";
-        }
-        String cpseparator = Utils.getPlatformName() == "windows" ? ";" : ":";
-        StringBuilder classPathBuilder = new StringBuilder();
-        classPathBuilder.append(new File(Utils.getKurarDirectory(), "KurarClient.jar").getAbsolutePath());
-        for (Library lib : manager.getLibraries()) {
-            classPathBuilder.append(cpseparator);
-            classPathBuilder.append(lib.getFilePath().getAbsolutePath());
-        }
+        final String javaLibraryPath = System.getProperty("java.home");
 
-        String finalTemp = temp;
         System.out.println("Starting Thread...");
         new Thread(() -> {
+            String temp;
+            Manager manager = new Manager(new File(Utils.getKurarDirectory(), "KurarClient.json").getAbsolutePath());
+            System.out.print("Download Assets and Libraries...");
+            try {
+                manager.download();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Success!");
+            if ("windows".equals(Utils.getPlatformName())) {
+                temp = javaLibraryPath + "\\bin\\java.exe";
+            } else {
+                temp = javaLibraryPath + "/bin/java";
+            }
+            String cpseparator = Utils.getPlatformName().equals("windows") ? ";" : ":";
+            StringBuilder classPathBuilder = new StringBuilder();
+            classPathBuilder.append(new File(Utils.getKurarDirectory(), "KurarClient.jar").getAbsolutePath());
+            for (Library lib : manager.getLibraries()) {
+                classPathBuilder.append(cpseparator);
+                classPathBuilder.append(lib.getFilePath().getAbsolutePath());
+            }
             String[] launchArgs = args;
             List<String> inputArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
             ArrayList<String> jvmArgs = new ArrayList<>();
-            jvmArgs.add(finalTemp);
-            if (Utils.getPlatformName() == "osx")
+            jvmArgs.add(temp);
+            if (Utils.getPlatformName().equals("osx"))
                 jvmArgs.add("-XstartOnFirstThread");
             if (launchArgs == null || launchArgs.length == 0) {
                 String assets = (new File(Utils.getWorkingDirectory(), "assets")).getAbsolutePath();
@@ -111,6 +106,6 @@ public class Main {
                 e.printStackTrace();
             }
             System.exit(0);
-        }).start();
+        }, "KurarClient").start();
     }
 }
