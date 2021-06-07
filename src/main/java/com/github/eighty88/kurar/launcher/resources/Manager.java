@@ -41,12 +41,10 @@ public class Manager {
     }
 
     public void parseLibraries(JsonObject versionJson) {
-        System.out.println("Parse Libraries...");
         String osName = Utils.getPlatformName();
         String arch = System.getProperty("sun.arch.data.model");
 
         JsonArray librariesArrayJson = versionJson.get("libraries").asArray();
-        System.out.println("Starting parse Libraries...");
         for (JsonValue val : librariesArrayJson.values()) {
             JsonObject libraryJson = val.asObject();
             if (libraryJson.get("rules") != null) {

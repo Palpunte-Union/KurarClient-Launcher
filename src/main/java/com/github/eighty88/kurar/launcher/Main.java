@@ -45,20 +45,16 @@ public class Main {
     }
 
     public void launch(String[] args) {
-        System.out.println("Starting...");
         final String javaLibraryPath = System.getProperty("java.home");
 
-        System.out.println("Starting Thread...");
         new Thread(() -> {
             String temp;
             Manager manager = new Manager(new File(Utils.getKurarDirectory(), "KurarClient.json").getAbsolutePath());
-            System.out.print("Download Assets and Libraries...");
             try {
                 manager.download();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Success!");
             if ("windows".equals(Utils.getPlatformName())) {
                 temp = javaLibraryPath + "\\bin\\java.exe";
             } else {
